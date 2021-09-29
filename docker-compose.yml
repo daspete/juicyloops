@@ -1,0 +1,27 @@
+services:
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - 80:80
+    
+    volumes:
+      - ./nginx:/etc/nginx/templates
+    networks:
+      nodenet:
+        aliases:
+          - juicyloops.localhost
+
+  juicyloops:
+    container_name: juicyloops
+    image: node:14
+    networks:
+      - nodenet
+    working_dir: /app
+    volumes: 
+      - .:/app
+    command: bash -c "yarn; yarn dev"
+
+networks:
+  nodenet:
+    driver: bridge
