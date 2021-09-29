@@ -15,25 +15,25 @@
         <div class="w-48 items-center gap-2 flex track__volumecontrols">
             <KnobInput v-model="TrackVolume" :min="0" :max="1" :step="0.01" />
             <KnobInput v-model="TrackPan" :min="-100" :max="100" :step="1" color="#10B981" />
-            <KnobInput v-model="TrackNote" :min="1" :max="9" :step="0.25" color="#3B82F6" />
+            <KnobInput v-model="TrackNote" :min="1" :max="9" :step="0.125" color="#3B82F6">
+                {{ Math.floor(TrackNote) }}
+            </KnobInput>
 
             <button :class="`${ track.muted ? 'text-red-500' : 'text-green-500' }`" @click="TrackMuted = !track.muted">
                 <font-awesome-icon :icon="['fas', track.muted ? 'volume-mute' : 'volume-up']"  />
             </button>
         </div>
-        
 
-        <div class="flex-grow bg-white bg-opacity-20 h-full">
-            <div class="w-full h-full flex gap-2 justify-center px-2 py-2" v-if="!updateTrack">
+        <div class="flex-grow  h-full">
+            <div class="w-full h-full flex gap-1 justify-center px-1 py-1" v-if="!updateTrack">
                 <div class="flex-grow" v-for="step in $parent.sequenceLength" :key="`step-${ track.id }-${ step }`">
                     <button 
-                        :class="`track__stepbutton w-full h-full ${ GetStepBackgroundColor(step - 1) }`"
+                        :class="`track__stepbutton w-full h-full border-2 border-gray-900 shadow-lg ${ GetStepBackgroundColor(step - 1) }`"
                         @click="ToggleStep(step - 1)"
                     ></button>
                 </div>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -64,6 +64,7 @@ export default {
                 'flex',
                 'items-center',
                 'gap-2',
+                'pl-3',
                 'bg-indigo-500',
                 'bg-opacity-20',
                 'text-gray-300',
@@ -130,9 +131,10 @@ export default {
         },
 
         GetStepBackgroundColor(step){
-            if(this.playStep == step) return 'bg-white'
-            if(this.track.pattern[step] == 1) return 'bg-yellow-500'
-            return 'bg-gray-900'
+            if(this.playStep == step) return 'bg-gradient-to-b to-yellow-700 from-yellow-200'
+            if(this.track.pattern[step] == 1) return 'bg-gradient-to-b to-yellow-900 from-yellow-500'
+            return 'bg-gradient-to-b to-gray-900 from-indigo-900'
+            // return 'bg-gray-900'
         }
     }
 }
@@ -140,8 +142,10 @@ export default {
 
 <style lang="scss">
 .track {
+    @apply shadow-lg;
+
     &__stepbutton {
-        transition: all .12s ease-out;
+        // transition: all .252s ease-out;
     }
 }
 </style>

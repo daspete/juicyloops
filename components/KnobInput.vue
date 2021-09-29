@@ -6,7 +6,11 @@
                 <path d="M20,76 A 40 40 0 1 1 80 76" fill="none" stroke="none"/>
                 <path d="M20,76 A 40 40 0 1 1 80 76" fill="none" :stroke="Color" :style="{ 'stroke-dashoffset': SvgRotation }" />
             </svg>
-            <div class="absolute top-0 pt-4 text-xs text-center w-full text-gray-400">{{ Math.round(value * 10) / 10 }}</div>
+            <div class="absolute top-0 pt-4 text-xs text-center w-full text-gray-400">
+                <slot>
+                    {{ Math.floor(value * 10) / 10 }}
+                </slot>
+            </div>
         </div>
     </div>
 </template>
