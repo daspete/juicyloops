@@ -23,11 +23,14 @@ export default class Track {
         if(this.type == 'microphone'){
             this.isRecording = false
             this.recordedData = null
+            this.recordedSampleData = null
             this.recorder = new Tone.Recorder()
             this.microphone = new Tone.UserMedia()
 
             this.microphone.connect(this.recorder)
             this.microphone.open()
+            this.sampleStartTime = 0
+            this.sampleDuration = 10
 
             this.player = null
         }
@@ -70,7 +73,7 @@ export default class Track {
 
         if(this.type == 'microphone'){
             if(!this.player) return
-            this.player.start(startTime)
+            this.player.start(startTime, this.sampleStartTime, this.sampleDuration)
         }
     }
 
@@ -81,11 +84,9 @@ export default class Track {
 
     async stopMicrophoneRecording(){
         this.isRecording = false
-        let data = await this.recorder.stop()
-        this.recordedData = URL.createObjectURL(data)
-        console.log(this.recordedData)
+        this.recordedSampleData = await this.recorder.stop()
+        this.recordedData = URL.createObjectURL(this.recordedSampleData)
         this.player = new Tone.Player(this.recordedData).connect(this.panVol)
-        console.log(this.player)
     }
 
     destroy(){
@@ -112,6 +113,14 @@ export default class Track {
 
     setLength(length){
         this.length = length
+    }
+
+    setSampleStartTime(time){
+        this.sampleStartTime = time
+    }
+
+    setSampleDuration(duration){
+        this.sampleDuration = duration
     }
 
     setVolume(volume){

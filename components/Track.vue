@@ -27,13 +27,21 @@
                     </button>
                 </div>
 
-                
-
                 <div class="w-14 flex gap-1 flex-wrap text-xs">
                     <button class="w-6 h-6 rounded-full bg-black text-gray-500 border-2 border-gray-900 font-bold bg-opacity-20" @click="FillEachStep(4)">4</button>
                     <button class="w-6 h-6 rounded-full bg-black text-gray-500 border-2 border-gray-900 font-bold bg-opacity-20" @click="FillEachStep(8)">8</button>
                     <button class="w-6 h-6 rounded-full bg-black text-gray-500 border-2 border-gray-900 font-bold bg-opacity-20" @click="FillEachStep(16)">16</button>
                     <button class="w-6 h-6 rounded-full bg-black text-gray-500 border-2 border-gray-900 font-bold bg-opacity-20" @click="FillEachStep(32)">32</button>
+                </div>
+
+                <div class="w-6 text-xs flex flex-wrap gap-1">
+                    <button @click="ShiftPatternRight" class="w-6 h-6 rounded-full bg-black text-gray-500 border-2 border-gray-900 font-bold bg-opacity-20">
+                        <font-awesome-icon size="sm" :icon="['fas', `chevron-right`]"  />
+                    </button>
+                    <button @click="ShiftPatternLeft" class="w-6 h-6 rounded-full bg-black text-gray-500 border-2 border-gray-900 font-bold bg-opacity-20">
+                        <font-awesome-icon size="sm" :icon="['fas', `chevron-left`]"  />
+                    </button>
+                    
                 </div>
             </div>
 
@@ -62,10 +70,21 @@
             <div class="flex flex-col gap-2 py-2 px-4 bg-black bg-opacity-20 rounded-md shadow-lg">
                 <div class="text-center text-gray-400 text-sm">Base settings</div>
                 <div class="flex gap-2">
-                    <KnobInput v-model="TrackNote" color="#3B82F6" label="Note" :options="track.availableNotes" />
-                    <KnobInput v-model="TrackTune" color="#3B82F6" label="Tune" :options="track.availableTunes" />
-                    <KnobInput v-model="TrackOctave" color="#3B82F6" label="Oct" :options="track.availableOctaves"/>
-                    <KnobInput v-model="TrackLength" color="#3B82F6" label="Len" :options="track.availableLengths"/>
+                    <template v-if="track.type == 'synth'">
+                        <KnobInput v-model="TrackNote" color="#3B82F6" label="Note" :options="track.availableNotes" />
+                        <KnobInput v-model="TrackTune" color="#3B82F6" label="Tune" :options="track.availableTunes" />
+                        <KnobInput v-model="TrackOctave" color="#3B82F6" label="Oct" :options="track.availableOctaves"/>
+                        <KnobInput v-model="TrackLength" color="#3B82F6" label="Len" :options="track.availableLengths"/>
+                    </template>
+                    <template v-if="track.type == 'microphone'">
+                        <KnobInput v-model="TrackSampleStartTime" :min="0" :max="6" :step="0.01" label="Start">
+                            {{ Math.round(TrackSampleStartTime * 100) / 100 }}
+                        </KnobInput>
+
+                        <KnobInput v-model="TrackSampleDuration" :min="0.01" :max="30" :step="0.01" label="Dur">
+                            {{ Math.round(TrackSampleDuration * 100) / 100 }}
+                        </KnobInput>
+                    </template>
                 </div>
             </div>
 
@@ -170,6 +189,22 @@ export default {
                 this.track.setLength(value)
             }
         },
+        TrackSampleStartTime: {
+            get() {
+                return this.track.sampleStartTime
+            },
+            set(value) {
+                this.track.setSampleStartTime(value)
+            }
+        },
+        TrackSampleDuration: {
+            get() {
+                return this.track.sampleDuration
+            },
+            set(value) {
+                this.track.setSampleDuration(value)
+            }
+        },
         TrackMuted: {
             get() {
                 return this.track.muted
@@ -213,6 +248,16 @@ export default {
             for(let i = 0; i < this.track.pattern.length; i++){
                 this.track.pattern[i].active = i % steps == 0
             }
+        },
+
+        ShiftPatternLeft(){
+            let firstItem = this.track.pattern.shift()
+            this.track.pattern.push(firstItem)
+        },
+
+        ShiftPatternRight(){
+            let lastItem = this.track.pattern.pop()
+            this.track.pattern.unshift(lastItem)
         }
     }
 }

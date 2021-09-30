@@ -49,7 +49,9 @@ export default {
                 'faTrash',
                 'faVolumeMute',
                 'faVolumeUp',
-                'faCogs'
+                'faCogs',
+                'faChevronLeft',
+                'faChevronRight',
             ],
             regular: [
                 'faPlusSquare',
