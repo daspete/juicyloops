@@ -50,6 +50,9 @@
             <div class="w-12">
                 <KnobInput v-model="TrackOctave" color="#3B82F6" label="Oct" :options="track.availableOctaves"/>
             </div>
+            <div class="w-12">
+                <KnobInput v-model="TrackLength" color="#3B82F6" label="Len" :options="track.availableLengths"/>
+            </div>
         </div>
     </div>
 </template>
@@ -142,6 +145,14 @@ export default {
                 this.track.setOctave(value)
             }
         },
+        TrackLength: {
+            get() {
+                return this.track.length
+            },
+            set(value) {
+                this.track.setLength(value)
+            }
+        },
         TrackMuted: {
             get() {
                 return this.track.muted
@@ -158,7 +169,7 @@ export default {
 
     methods: {
         async ToggleStep(step){
-            this.track.pattern[step] = this.track.pattern[step] == 1 ? 0 : 1
+            this.track.pattern[step].active = !this.track.pattern[step].active
             this.updateTrack = true
             await this.$nextTick()
             this.updateTrack = false
@@ -166,7 +177,7 @@ export default {
 
         GetStepBackgroundColor(step){
             if(this.playStep == step) return 'bg-gradient-to-b to-yellow-600 from-yellow-100'
-            if(this.track.pattern[step] == 1) return 'bg-gradient-to-b to-yellow-900 from-yellow-500'
+            if(this.track.pattern[step].active) return 'bg-gradient-to-b to-yellow-900 from-yellow-500'
             if(step % 4 == 0) return 'bg-gradient-to-b to-gray-900 from-indigo-900'
             return 'bg-gradient-to-b to-gray-900 from-indigo-700'
             // return 'bg-gray-900'
