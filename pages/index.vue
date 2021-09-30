@@ -6,18 +6,7 @@
 
 <script>
 export default {
-    mounted(){
-        // window.addEventListener('keydown', (e) => {
-        //     console.log(e.key)
-        //     if(e.key == 'n'){
-        //         this.$store.commit('player/AddTrack')
-        //     }
-        //     if(e.key == ' '){
-        //         this.$store.commit('player/SetIsPlaying', !this.$store.getters['player/IsPlaying'])
-        //     }
-            
-        // })
-    }
+    
 }
 </script>
 
