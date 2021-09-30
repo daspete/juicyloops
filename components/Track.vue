@@ -16,10 +16,18 @@
             <div class="w-49 items-center gap-2 flex track__volumecontrols">
                 <KnobInput v-model="TrackVolume" :min="-40" :max="6" :step="0.5" label="Vol" />
                 <KnobInput v-model="TrackPan" :min="-1" :max="1" :step="0.01" color="#10B981" label="Pan" />
+                
+                <div class="pr-1 w-6">
+                    <button :class="`${ track.muted ? 'text-red-500' : 'text-green-500' }`" @click="TrackMuted = !track.muted">
+                        <font-awesome-icon :icon="['fas', track.muted ? 'volume-mute' : 'volume-up']"  />
+                    </button>
 
-                <button :class="`pr-1 ${ track.muted ? 'text-red-500' : 'text-green-500' }`" @click="TrackMuted = !track.muted">
-                    <font-awesome-icon :icon="['fas', track.muted ? 'volume-mute' : 'volume-up']"  />
-                </button>
+                    <button :class="`${ track.isRecording ? 'text-green-500' : 'text-red-500' }`" v-if="track.type == 'microphone'" @click="track.isRecording ? track.stopMicrophoneRecording() : track.startMicrophoneRecording()">
+                        <font-awesome-icon :icon="['fas', `circle`]"  />
+                    </button>
+                </div>
+
+                
 
                 <div class="w-14 flex gap-1 flex-wrap text-xs">
                     <button class="w-6 h-6 rounded-full bg-black text-gray-500 border-2 border-gray-900 font-bold bg-opacity-20" @click="FillEachStep(4)">4</button>

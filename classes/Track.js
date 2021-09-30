@@ -3,6 +3,7 @@ import Sequencer from './Sequencer'
 
 export default class Track {
     constructor(params){
+        this.type = params.type
         this.id = params.id
         this.name = params.name
         this.muted = params.muted
@@ -14,7 +15,22 @@ export default class Track {
         this.length = 6
 
         this.panVol = new Tone.PanVol(this.pan, this.calculateVolume(this.volume)).toDestination()
-        this.synth = new Tone.Synth().connect(this.panVol)
+        
+        if(this.type == 'synth'){
+            this.synth = new Tone.Synth().connect(this.panVol)
+        }
+
+        if(this.type == 'microphone'){
+            this.isRecording = false
+            this.recordedData = null
+            this.recorder = new Tone.Recorder()
+            this.microphone = new Tone.UserMedia()
+
+            this.microphone.connect(this.recorder)
+            this.microphone.open()
+
+            this.player = null
+        }
 
         this.availableNotes = ['C','D','E','F','G','A','B']
         this.availableTunes = ['bb', 'b', '', '#', 'x']
@@ -36,14 +52,40 @@ export default class Track {
 
     play(step, time){
         if(this.muted) return
-        if(!this.synth) return
         if(this.pattern[step].active){
+            this.playSound(time)   
+        }
+    }
+
+    playSound(startTime){
+        if(this.type == 'synth'){
+            if(!this.synth) return
+
             this.synth.triggerAttackRelease(
                 `${ this.availableNotes[parseInt(this.note)] }${ this.availableTunes[parseInt(this.tune)] }${ this.availableOctaves[parseInt(this.octave)] }`, 
                 this.availableLengths[this.length], 
-                time
+                startTime
             )
         }
+
+        if(this.type == 'microphone'){
+            if(!this.player) return
+            this.player.start(startTime)
+        }
+    }
+
+    startMicrophoneRecording(){
+        this.isRecording = true
+        this.recorder.start()
+    }
+
+    async stopMicrophoneRecording(){
+        this.isRecording = false
+        let data = await this.recorder.stop()
+        this.recordedData = URL.createObjectURL(data)
+        console.log(this.recordedData)
+        this.player = new Tone.Player(this.recordedData).connect(this.panVol)
+        console.log(this.player)
     }
 
     destroy(){

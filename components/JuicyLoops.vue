@@ -17,8 +17,12 @@
 
             <input class="bg-white bg-opacity-20 w-16 pl-2" type="number" min="10" max="999" v-model="Bpm">
 
-            <button @click="AddTrack" class="text-green-600 font-bold">
-                <font-awesome-icon size="lg" :icon="['fas', `plus-circle`]"  /> Add track
+            <button @click="AddTrack('synth')" class="text-green-600 font-bold">
+                <font-awesome-icon size="lg" :icon="['fas', `plus-circle`]"  /> Add synth track
+            </button>
+
+            <button @click="AddTrack('microphone')" class="text-green-600 font-bold">
+                <font-awesome-icon size="lg" :icon="['fas', `plus-circle`]"  /> Add microphone track
             </button>
         </div>
 
@@ -99,7 +103,7 @@ export default {
     },
 
     methods: {
-        async AddTrack(){
+        async AddTrack(type){
             let highestTrackId = 0
             this.tracks.forEach(track => {
                 if(track.id > highestTrackId){
@@ -110,7 +114,8 @@ export default {
             let track = new Track({
                 id: highestTrackId + 1,
                 name: `Track ${ highestTrackId + 1 }`,
-                muted: false
+                muted: false,
+                type: type
             })
 
             this.tracks.push(track)
