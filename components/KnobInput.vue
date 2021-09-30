@@ -12,6 +12,7 @@
                 </slot>
             </div>
         </div>
+        <div class="-mt-2 text-xs text-center text-gray-400" v-if="label != ''">{{ label }}</div>
     </div>
 </template>
 
@@ -23,6 +24,7 @@ export default {
         max: { type: Number, default: 1 },
         step: { type: Number, default: 0.01 },
         color: { type: String, default: '#F59E0B' },
+        label: { type: String, default: '' },
     },
 
     data(){

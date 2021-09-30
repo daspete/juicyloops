@@ -13,9 +13,9 @@
         </div>
 
         <div class="w-48 items-center gap-2 flex track__volumecontrols">
-            <KnobInput v-model="TrackVolume" :min="0" :max="1" :step="0.01" />
-            <KnobInput v-model="TrackPan" :min="-100" :max="100" :step="1" color="#10B981" />
-            <KnobInput v-model="TrackNote" :min="1" :max="9" :step="0.125" color="#3B82F6">
+            <KnobInput v-model="TrackVolume" :min="-40" :max="6" :step="0.5" label="Vol" />
+            <KnobInput v-model="TrackPan" :min="-1" :max="1" :step="0.01" color="#10B981" label="Pan" />
+            <KnobInput v-model="TrackNote" :min="1" :max="9" :step="0.125" color="#3B82F6" label="Oct">
                 {{ Math.floor(TrackNote) }}
             </KnobInput>
 

@@ -6,7 +6,7 @@ export default class Track {
         this.id = params.id
         this.name = params.name
         this.muted = params.muted
-        this.volume = 0.8
+        this.volume = 0
         this.pan = 0
         this.note = 2
 
@@ -48,7 +48,7 @@ export default class Track {
 
     setPan(pan){
         this.pan = pan
-        this.panVol.pan.value = this.pan * 0.01
+        this.panVol.pan.value = this.pan
     }
 
     setName(name){
@@ -56,6 +56,6 @@ export default class Track {
     }
 
     calculateVolume(volume){
-        return -40 * (1 - volume)
+        return volume//-40 * (1 - volume)
     }
 }
