@@ -13,14 +13,20 @@
                 <input class="w-full bg-white bg-opacity-20 text-sm px-2 py-1" type="text" v-model="TrackName">
             </div>
 
-            <div class="w-36 items-center gap-2 flex track__volumecontrols">
+            <div class="w-49 items-center gap-2 flex track__volumecontrols">
                 <KnobInput v-model="TrackVolume" :min="-40" :max="6" :step="0.5" label="Vol" />
                 <KnobInput v-model="TrackPan" :min="-1" :max="1" :step="0.01" color="#10B981" label="Pan" />
-                
 
-                <button :class="`${ track.muted ? 'text-red-500' : 'text-green-500' }`" @click="TrackMuted = !track.muted">
+                <button :class="`pr-1 ${ track.muted ? 'text-red-500' : 'text-green-500' }`" @click="TrackMuted = !track.muted">
                     <font-awesome-icon :icon="['fas', track.muted ? 'volume-mute' : 'volume-up']"  />
                 </button>
+
+                <div class="w-14 flex gap-1 flex-wrap text-xs">
+                    <button class="w-6 h-6 rounded-full bg-black text-gray-500 border-2 border-gray-900 font-bold bg-opacity-20" @click="FillEachStep(4)">4</button>
+                    <button class="w-6 h-6 rounded-full bg-black text-gray-500 border-2 border-gray-900 font-bold bg-opacity-20" @click="FillEachStep(8)">8</button>
+                    <button class="w-6 h-6 rounded-full bg-black text-gray-500 border-2 border-gray-900 font-bold bg-opacity-20" @click="FillEachStep(16)">16</button>
+                    <button class="w-6 h-6 rounded-full bg-black text-gray-500 border-2 border-gray-900 font-bold bg-opacity-20" @click="FillEachStep(32)">32</button>
+                </div>
             </div>
 
             <div class="flex-grow h-12">
@@ -29,6 +35,9 @@
                         <button 
                             :class="`track__stepbutton w-full h-full border-2 border-gray-900 shadow-lg ${ GetStepBackgroundColor(step - 1) }`"
                             @click="ToggleStep(step - 1)"
+                            :id="`patternstep-${ track.id }-${ step - 1 }`"
+                            @mousedown="activateStep = !track.pattern[step - 1].active"
+                            @mousemove="OnPatternMouseMove"
                         ></button>
                     </div>
                 </div>
@@ -40,19 +49,18 @@
                 </button>
             </div>
         </div>
-        <div class="px-2 py-1 flex bg-indigo-800 bg-opacity-20" v-if="settingsOpen">
-            <div class="w-12">
-                <KnobInput v-model="TrackNote" color="#3B82F6" label="Note" :options="track.availableNotes" />
+
+        <div class="px-2 py-2 flex gap-2 bg-indigo-800 bg-opacity-20" v-if="settingsOpen">
+            <div class="flex flex-col gap-2 py-2 px-4 bg-black bg-opacity-20 rounded-md shadow-lg">
+                <div class="text-center text-gray-400 text-sm">Base settings</div>
+                <div class="flex gap-2">
+                    <KnobInput v-model="TrackNote" color="#3B82F6" label="Note" :options="track.availableNotes" />
+                    <KnobInput v-model="TrackTune" color="#3B82F6" label="Tune" :options="track.availableTunes" />
+                    <KnobInput v-model="TrackOctave" color="#3B82F6" label="Oct" :options="track.availableOctaves"/>
+                    <KnobInput v-model="TrackLength" color="#3B82F6" label="Len" :options="track.availableLengths"/>
+                </div>
             </div>
-            <div class="w-12">
-                <KnobInput v-model="TrackTune" color="#3B82F6" label="Tune" :options="track.availableTunes" />
-            </div>
-            <div class="w-12">
-                <KnobInput v-model="TrackOctave" color="#3B82F6" label="Oct" :options="track.availableOctaves"/>
-            </div>
-            <div class="w-12">
-                <KnobInput v-model="TrackLength" color="#3B82F6" label="Len" :options="track.availableLengths"/>
-            </div>
+
         </div>
     </div>
 </template>
@@ -75,6 +83,7 @@ export default {
         return {
             updateTrack: false,
             settingsOpen: false,
+            activateStep: false
         }
     },
 
@@ -180,7 +189,22 @@ export default {
             if(this.track.pattern[step].active) return 'bg-gradient-to-b to-yellow-900 from-yellow-500'
             if(step % 4 == 0) return 'bg-gradient-to-b to-gray-900 from-indigo-900'
             return 'bg-gradient-to-b to-gray-900 from-indigo-700'
-            // return 'bg-gray-900'
+        },
+
+        OnPatternMouseMove($event){
+            if($event.buttons != 1) return
+            if(!$event.target.id) return
+
+            let step = $event.target.id.split('-')[2]
+
+            this.track.pattern[parseInt(step)].active = this.activateStep
+            
+        },
+
+        FillEachStep(steps){
+            for(let i = 0; i < this.track.pattern.length; i++){
+                this.track.pattern[i].active = i % steps == 0
+            }
         }
     }
 }
