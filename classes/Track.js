@@ -90,7 +90,16 @@ export default class Track {
     }
 
     destroy(){
-        this.synth = null
+        if(this.type == 'synth'){
+            this.synth = null
+        }
+
+        if(this.type == 'microphone'){
+            this.recorder = null
+            this.microphone = null
+            this.player = null
+        }
+        
         console.log(`${ this.name } destroyed`)
     }
 
