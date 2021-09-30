@@ -8,7 +8,8 @@
             </svg>
             <div class="absolute top-0 pt-4 text-xs text-center w-full text-gray-400">
                 <slot>
-                    {{ Math.floor(value * 10) / 10 }}
+                    <span v-if="options.length == 0">{{ Math.floor(value * 10) / 10 }}</span>
+                    <span v-if="options.length > 0">{{ options[value] }}</span>
                 </slot>
             </div>
         </div>
@@ -20,6 +21,7 @@
 export default {
     props: {
         value: { type: Number, default: 0.5 },
+        options: { type: Array, default: () => [] },
         min: { type: Number, default: 0 },
         max: { type: Number, default: 1 },
         step: { type: Number, default: 0.01 },
@@ -28,10 +30,16 @@ export default {
     },
 
     data(){
-        return {
+        let _data = {
             dragging: false,
             dragStartY: 0,
         }
+
+        if(this.options.length > 0){
+            _data.optionValue = this.value
+        }
+
+        return _data
     },
 
     computed: {
@@ -42,6 +50,10 @@ export default {
             return this.color
         },
         Percentage(){
+            if(this.options.length > 0){
+                return this.optionValue / (this.options.length - 1)
+            }
+            
             return (this.value - this.min) / (this.max - this.min)
         },
         SvgRotation(){
@@ -75,11 +87,24 @@ export default {
             if(!this.dragging) return
             
             let delta = e.clientY - this.dragStartY
-            
-            let newValue = this.value - delta * this.step
-            newValue = Math.max(this.min, Math.min(this.max, newValue))
 
-            this.$emit('input', newValue)
+            if(this.options.length > 0){
+                let newValue = this.optionValue - delta * 0.1
+                newValue = Math.max(0, Math.min(this.options.length - 1, newValue))
+
+                this.optionValue = newValue
+
+                if(parseInt(this.optionValue) != this.value){
+                    this.$emit('input', parseInt(this.optionValue))
+                }
+            }else{
+                let newValue = this.value - delta * this.step
+                newValue = Math.max(this.min, Math.min(this.max, newValue))
+
+                this.$emit('input', newValue)
+            }
+            
+            
 
             this.dragStartY = e.clientY
         }

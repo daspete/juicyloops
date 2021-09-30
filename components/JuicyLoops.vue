@@ -69,7 +69,10 @@ export default {
             set(value){
                 this.isPlaying = value
                 if(this.isPlaying) Sequencer.play()
-                if(!this.isPlaying) Sequencer.pause()
+                if(!this.isPlaying) {
+                    this.playStep = -1
+                    Sequencer.pause()
+                }
             }
         },
         

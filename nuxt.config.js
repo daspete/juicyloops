@@ -34,7 +34,8 @@ export default {
                 'faPause',
                 'faTrash',
                 'faVolumeMute',
-                'faVolumeUp'
+                'faVolumeUp',
+                'faCogs'
             ],
             regular: [
                 'faPlusSquare',
