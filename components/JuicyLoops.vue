@@ -30,6 +30,10 @@
                 :playStep="playStep"
             />
         </div>
+
+        <div class="absolute top-0 right-0 py-1 px-4">
+            <a class="text-gray-500" href="mailto:daspetemail@gmail.com">Contact</a>
+        </div>
     </div>
 </template>
 
