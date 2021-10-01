@@ -1,7 +1,10 @@
 <template>
-    <div class="juicyloops w-screen h-screen overflow-hidden flex gap-2 px-2 py-2 flex-col bg-gradient-to-t to-gray-900 from-indigo-900">
-        <div class="topbar flex gap-8 text-white justify-center">
-            <div class="topbar__controls flex gap-2">
+    <div class="juicyloops w-screen h-screen overflow-hidden flex flex-col bg-gradient-to-t to-gray-900 from-indigo-900">
+        <div class="topbar flex gap-8 text-white justify-between items-center bg-black px-2 shadow-xl">
+            <div class="logo">
+                <img src="/images/juicyloopslogo.svg" class="w-64" />
+            </div>
+            <div class="topbar__controls flex gap-4">
                 <button v-if="!isPlaying" @click="IsPlaying = true">
                     <font-awesome-icon :icon="['fas', `play`]"  />
                 </button>
@@ -13,17 +16,23 @@
                 <button :class="`${ isRecording ? 'text-green-400' : 'text-red-400' }`" @click="IsRecording = !isRecording">
                     <font-awesome-icon :icon="['fas', `circle`]"  />
                 </button>
+
+                <input class="bg-white bg-opacity-20 w-16 pl-2" type="number" min="10" max="999" v-model="Bpm">
+
+                <button @click="AddTrack('synth')" class="text-green-600 font-bold">
+                    <font-awesome-icon size="lg" :icon="['fas', `plus-circle`]"  /> Add synth track
+                </button>
+
+                <button @click="AddTrack('microphone')" class="text-green-600 font-bold">
+                    <font-awesome-icon size="lg" :icon="['fas', `plus-circle`]"  /> Add microphone track
+                </button>
+            </div>
+            <div>
+                <a class="text-gray-500 mr-2" target="_blank" href="https://github.com/daspete/juicyloops">Github</a>  
+                <a class="text-gray-500" href="mailto:daspetemail@gmail.com">Contact</a>
             </div>
 
-            <input class="bg-white bg-opacity-20 w-16 pl-2" type="number" min="10" max="999" v-model="Bpm">
-
-            <button @click="AddTrack('synth')" class="text-green-600 font-bold">
-                <font-awesome-icon size="lg" :icon="['fas', `plus-circle`]"  /> Add synth track
-            </button>
-
-            <button @click="AddTrack('microphone')" class="text-green-600 font-bold">
-                <font-awesome-icon size="lg" :icon="['fas', `plus-circle`]"  /> Add microphone track
-            </button>
+            
         </div>
 
         <div class="arranger flex-grow overflow-y-auto flex flex-col gap-1 text-white">
@@ -33,10 +42,6 @@
                 :track="track"
                 :playStep="playStep"
             />
-        </div>
-
-        <div class="absolute top-0 right-0 py-1 px-4">
-            <a class="text-gray-500" href="mailto:daspetemail@gmail.com">Contact</a>
         </div>
     </div>
 </template>
@@ -90,6 +95,8 @@ export default {
             },
             set(value){
                 this.isRecording = value
+                if(this.isRecording) Sequencer.startRecording()
+                if(!this.isRecording) Sequencer.stopRecording()
             }
         },
     },
@@ -119,6 +126,7 @@ export default {
             })
 
             this.tracks.push(track)
+            Sequencer.tracks = this.tracks
 
             await this.$nextTick()
 
@@ -133,6 +141,7 @@ export default {
             trackToRemove.destroy()
             
             this.tracks = this.tracks.filter(t => t.id !== track.id)
+            Sequencer.tracks = this.tracks
         },
 
         GetTrackById(trackId){

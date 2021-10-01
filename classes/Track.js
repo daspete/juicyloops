@@ -15,6 +15,7 @@ export default class Track {
         this.length = 6
 
         this.panVol = new Tone.PanVol(this.pan, this.calculateVolume(this.volume)).toDestination()
+        this.panVol.connect(Sequencer.audioStream)
         
         if(this.type == 'synth'){
             this.synth = new Tone.Synth().connect(this.panVol)

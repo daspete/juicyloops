@@ -1,5 +1,5 @@
 import * as Tone from 'tone'
-
+const Sleep = async (ms) => new Promise(resolve => setTimeout(resolve, ms))
 class Sequencer {
     constructor(){
         this.bpm = 136
@@ -8,6 +8,11 @@ class Sequencer {
         this.sequenceLength = 64
         this.sequencePattern = []
         this.stepLength = 1
+
+        this.audioContext = Tone.context
+        this.audioStream = this.audioContext.createMediaStreamDestination()
+        this.recorder = null
+        this.recordedChunks = []
 
         for(let i = 0; i < this.sequenceLength; i++){
             this.sequencePattern.push(i)
@@ -55,6 +60,32 @@ class Sequencer {
 
         Tone.Transport.stop()
     }
+
+    startRecording(){
+        this.recordedChunks = []
+
+        this.recorder = new MediaRecorder(this.audioStream.stream)
+        this.recorder.ondataavailable = (chunk) => {
+            this.recordedChunks.push(chunk.data)
+        }
+        this.recorder.start()
+    }
+
+    stopRecording(){
+        if(!this.recorder) return
+        
+        this.recorder.onstop = () => {
+            let blob = new Blob(this.recordedChunks, { type: 'audio/wav' })
+            const link = document.createElement('a')
+            link.href = URL.createObjectURL(blob)
+            link.download = 'juicyrecording.wav'
+            link.click()
+        }
+        this.recorder.stop()
+
+
+    }
+    
 }
 
 const sequencer = new Sequencer()
