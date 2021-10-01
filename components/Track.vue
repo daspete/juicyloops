@@ -66,17 +66,29 @@
             </div>
         </div>
 
-        <div class="px-2 py-2 flex gap-2 bg-indigo-800 bg-opacity-20" v-if="settingsOpen">
-            <div class="flex flex-col gap-2 py-2 px-4 bg-black bg-opacity-20 rounded-md shadow-lg">
+        <div class="px-2 py-2 flex gap-2 flex-wrap bg-indigo-800 bg-opacity-20" v-if="settingsOpen">
+            <div class="flex flex-col gap-2 py-2 px-4 bg-black bg-opacity-20 rounded-md shadow-lg w-full" v-if="track.type == 'microphone'">
+                <div class="text-center text-gray-400 text-sm">Waveform</div>
+                <Waveform v-if="track.recordedSampleData" :track="track" :options="{
+                    barGap: 1,
+                    barWidth: 2,
+                    barRadius: 1,
+                    barHeight: 4,
+                    responsive: true,
+                    interact: false,
+                    cursorWidth: 0,
+                    waveColor: '#818CF8'
+                }" />
+            </div>
+
+            <div class="flex flex-col gap-2 py-2 px-4 bg-black bg-opacity-20 rounded-md shadow-lg" v-if="track.type == 'synth'">
                 <div class="text-center text-gray-400 text-sm">Base settings</div>
                 <div class="flex gap-2">
-                    <template v-if="track.type == 'synth'">
-                        <KnobInput v-model="TrackNote" color="#3B82F6" label="Note" :options="track.availableNotes" />
-                        <KnobInput v-model="TrackTune" color="#3B82F6" label="Tune" :options="track.availableTunes" />
-                        <KnobInput v-model="TrackOctave" color="#3B82F6" label="Oct" :options="track.availableOctaves"/>
-                        <KnobInput v-model="TrackLength" color="#3B82F6" label="Len" :options="track.availableLengths"/>
-                    </template>
-                    <template v-if="track.type == 'microphone'">
+                    <KnobInput v-model="TrackNote" color="#3B82F6" label="Note" :options="track.availableNotes" />
+                    <KnobInput v-model="TrackTune" color="#3B82F6" label="Tune" :options="track.availableTunes" />
+                    <KnobInput v-model="TrackOctave" color="#3B82F6" label="Oct" :options="track.availableOctaves"/>
+                    <KnobInput v-model="TrackLength" color="#3B82F6" label="Len" :options="track.availableLengths"/>
+                    <!-- <template v-if="track.type == 'microphone'">
                         <KnobInput v-model="TrackSampleStartTime" :min="0" :max="6" :step="0.01" label="Start">
                             {{ Math.round(TrackSampleStartTime * 100) / 100 }}
                         </KnobInput>
@@ -84,7 +96,7 @@
                         <KnobInput v-model="TrackSampleDuration" :min="0.01" :max="30" :step="0.01" label="Dur">
                             {{ Math.round(TrackSampleDuration * 100) / 100 }}
                         </KnobInput>
-                    </template>
+                    </template> -->
                 </div>
             </div>
 

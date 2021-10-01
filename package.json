@@ -22,6 +22,7 @@
     "sass": "^1.41.1",
     "sass-loader": "^10.1.0",
     "portal-vue": "^2.1.7",
-    "tone": "^14.7.77"
+    "tone": "^14.7.77",
+    "wavesurfer.js": "^5.2.0"
   }
 }

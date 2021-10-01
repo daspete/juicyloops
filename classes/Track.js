@@ -13,6 +13,7 @@ export default class Track {
         this.tune = 2
         this.octave = 2
         this.length = 6
+        
 
         this.panVol = new Tone.PanVol(this.pan, this.calculateVolume(this.volume)).toDestination()
         this.panVol.connect(Sequencer.audioStream)
